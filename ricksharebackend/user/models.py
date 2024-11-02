@@ -22,6 +22,21 @@ class User(AbstractBaseUser):
     # Required fields for createsuperuser command
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
+    
+class UserProfile(models.Model):
+    user = models.ForeignKey(User, related_name='profile', on_delete=models.CASCADE)
+    xp = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.user.username}'s profile"
+
+    def add_xp(self, points):
+        self.xp += points
+        self.save()
+    
+    def reduce_xp(self, points):
+        self.xp -= points
+        self.save()
 
 
 class Token(models.Model):
