@@ -1,19 +1,40 @@
-export default function Example() {
+import { FormEvent, useState } from "react";
+import api from "../api/api";
+import useAuth from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+
+export default function LoginPage() {
+
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate(); 
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    const data = {
+      username: username,
+      password: password,
+    };
+
+    api.post('/user/auth/', data)
+      .then(response => {
+        login(response.data.response.accessToken, response.data.response.refreshToken)
+        navigate("/"); 
+      })
+      .catch(error => {
+        console.error('Error during login:', error);
+
+      });
+  };
   return (
     <>
-      {/*
-            This example requires updating your template:
-    
-            ```
-            <html class="h-full bg-white">
-            <body class="h-full">
-            ```
-          */}
+
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
-            alt="Your Company"
-            src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
+            alt="Rickshare"
+            src="/logo.png"
             className="mx-auto h-10 w-auto"
           />
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
@@ -23,8 +44,7 @@ export default function Example() {
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form
-            action="#"
-            method="POST"
+            onSubmit={handleSubmit}
             className="space-y-6">
             <div>
               <label
@@ -39,6 +59,8 @@ export default function Example() {
                   type="text"
                   required
                   autoComplete="text"
+                  onChange={(e) => setUsername(e.target.value)}
+                  value={username}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                 />
               </div>
@@ -66,7 +88,10 @@ export default function Example() {
                   type="password"
                   required
                   autoComplete="current-password"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-slate-600 sm:text-sm/6"
+
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                 />
               </div>
             </div>
@@ -93,3 +118,4 @@ export default function Example() {
     </>
   );
 }
+

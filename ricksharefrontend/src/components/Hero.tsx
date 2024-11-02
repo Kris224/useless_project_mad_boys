@@ -19,7 +19,7 @@ export default function Example() {
               <span className="sr-only">Rickshare</span>
               <img
                 alt=""
-                src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
+                src="/logo.png"
                 className="h-8 w-auto"
               />
             </a>
@@ -57,7 +57,7 @@ export default function Example() {
                 <span className="sr-only">Rickshare</span>
                 <img
                   alt=""
-                  src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
+                  src="/logo.png"
                   className="h-8 w-auto"
                 />
               </a>

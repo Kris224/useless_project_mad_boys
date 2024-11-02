@@ -1,4 +1,38 @@
-export default function Example() {
+import { FormEvent, useState } from "react";
+import api from "../api/api";
+import { useNavigate } from "react-router-dom";
+
+export default function SignupPage() {
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [passwd, setPasswd] = useState('');
+  const [confPasswd, setConfPasswd] = useState('');
+  const navigate = useNavigate(); 
+
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (passwd !== confPasswd) {
+      console.log('Passwords not match')
+        return;
+    }
+    const data = {
+        username: username,
+        email: email,
+        password: passwd,
+    };
+
+    api.post('/user/register/', data)
+        .then(response => {
+            console.log('Registration successful:', response.data);
+            navigate('/login')
+            // handle successful registration (e.g., show a success message, redirect, etc.)
+        })
+        .catch(error => {
+            console.error('Error during registration:', error);
+            // handle registration error (e.g., show an error message)
+        });
+  };
   return (
     <>
       {/*
@@ -12,8 +46,8 @@ export default function Example() {
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-10 pt-20">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
-            alt="Your Company"
-            src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
+            alt="Rickshare"
+            src="/logo.png"
             className="mx-auto h-10 w-auto"
           />
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
@@ -23,8 +57,7 @@ export default function Example() {
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form
-            action="#"
-            method="POST"
+            onSubmit={handleSubmit}
             className="space-y-6">
             <div>
               <div className="flex items-center justify-between">
@@ -42,6 +75,8 @@ export default function Example() {
                   type="text"
                   required
                   autoComplete="current-username"
+                  onChange={(e) => setUsername(e.target.value)}
+                  value={username}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                 />
               </div>
@@ -60,6 +95,8 @@ export default function Example() {
                   type="email"
                   required
                   autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                 />
               </div>
@@ -81,6 +118,8 @@ export default function Example() {
                   type="password"
                   required
                   autoComplete="current-password"
+                  value={passwd}
+                  onChange={(e) => setPasswd(e.target.value)}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                 />
               </div>
@@ -102,6 +141,8 @@ export default function Example() {
                   type="password"
                   required
                   autoComplete="current-password"
+                  value={confPasswd}
+                  onChange={(e) => setConfPasswd(e.target.value)}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                 />
               </div>
