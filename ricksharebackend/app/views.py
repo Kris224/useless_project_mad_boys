@@ -41,7 +41,7 @@ class TripCardAPI(APIView):
             filters &= Q(date=search_date)
 
         trips = Trip.objects.filter(filters)
-        serializer = TripSerializer(trips, many=True)
+        serializer = TripSerializer(trips, many=True,context={'user': JWTUtils.fetch_user_id(request)})
         return CustomResponse(response=serializer.data).get_success_response()
     
 
@@ -107,5 +107,5 @@ class TripDetailView(APIView):
 
     def get(self, request, trip_id):
         trip = get_object_or_404(Trip, id=trip_id)
-        serializer = TripDetailSerializer(trip)
+        serializer = TripDetailSerializer(trip,context={'user': JWTUtils.fetch_user_id(request)})
         return CustomResponse(response=serializer.data).get_success_response()
