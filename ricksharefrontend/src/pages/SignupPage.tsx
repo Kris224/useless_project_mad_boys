@@ -115,6 +115,15 @@ export default function Example() {
               </button>
             </div>
           </form>
+
+          <p className="mt-10 text-center text-sm/6 text-gray-500">
+            Already have an account?{" "}
+            <a
+              href="/login"
+              className="font-semibold text-slate-900 hover:text-slate-700">
+              Login
+            </a>
+          </p>
         </div>
       </div>
     </>
