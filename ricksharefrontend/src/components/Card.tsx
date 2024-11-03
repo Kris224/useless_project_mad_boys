@@ -68,12 +68,15 @@ const Card: React.FC<CardProps> = ({ trip, handleJoin }) => {
               See Details
             </Link>
           ) : (
-            <span
-              onClick={handleJoin}
-              className="h-[36px] bg-indigo-600 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-center text-sm cursor-pointer">
-              Join Trip
-            </span>
-          )}
+      
+              trip.member_count > 0 && (
+                <span
+                  onClick={handleJoin}
+                  className="h-[36px] bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-center text-sm cursor-pointer">
+                  Join Trip
+                </span>
+              
+          ))}
         </div>
       </div>
     </div>
