@@ -30,17 +30,21 @@ const CardList: React.FC = () => {
 
   useEffect(() => {
     const fetchTrips = async () => {
-      try {
-        const response = await api.get("/app/trip-card/");
-        setTrips(response.data.response);
-      } catch (err) {
-        console.error("Error fetching trips:", err);
-        setError("Failed to load trips.");
-      }
+        try {
+            const response = await api.get("/app/trip-card/");
+            const tripsData = response.data.response.map((trip: Trip) => ({
+                ...trip,
+                members: trip.members || [], // Ensure members is an array
+            }));
+            setTrips(tripsData);
+        } catch (err) {
+            console.error("Error fetching trips:", err);
+            setError("Failed to load trips.");
+        }
     };
 
     fetchTrips();
-  }, [showModal]);
+}, [showModal]);
 
   const handleJoin = async (tripId: string) => {
     try {
@@ -64,13 +68,14 @@ const CardList: React.FC = () => {
 
   const handleCreateTrip = async () => {
     try {
-      const response = await api.post("/app/trip-card/", newTrip);
-      setTrips([...trips, response.data.response]); // Add new trip to list
-      setShowModal(false);
+        const response = await api.post("/app/trip-card/", newTrip);
+        const newTripData = { ...response.data.response, members: response.data.response.members || [] };
+        setTrips([...trips, newTripData]); 
+        setShowModal(false);
     } catch (error) {
-      console.error("Error creating trip:", error);
+        console.error("Error creating trip:", error);
     }
-  };
+};
 
   if (error) {
     return <div className="text-red-500">{error}</div>;

@@ -18,16 +18,16 @@ interface CardProps {
   handleJoin: () => void;
 }
 
-// Helper function to convert time to 12-hour format
-const formatTime12Hour = (time: string) => {
+const formatTime12Hour = (time: string | undefined) => {
+  if (!time) return "N/A"; // Return a default value if time is undefined
   const [hour, minute] = time.split(":");
   const date = new Date();
   date.setHours(parseInt(hour));
   date.setMinutes(parseInt(minute));
   return date.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
   });
 };
 

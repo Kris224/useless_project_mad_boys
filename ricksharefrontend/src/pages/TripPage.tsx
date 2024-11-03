@@ -39,7 +39,8 @@ const TripDetails: React.FC = () => {
         fetchTripDetails();
     }, [tripId]);
 
-    const formatTime12Hour = (time: string) => {
+    const formatTime12Hour = (time: string | undefined) => {
+        if (!time) return "N/A";
         const [hour, minute] = time.split(":");
         const date = new Date();
         date.setHours(parseInt(hour));
