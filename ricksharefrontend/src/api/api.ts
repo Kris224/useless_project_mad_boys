@@ -7,7 +7,7 @@ import {
 // import useAuth from '../hooks/useAuth';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api', // replace with your API base URL
+  baseURL: 'https://dilshadvln.pythonanywhere.com/api', // replace with your API base URL
 });
 
 // const refreshInstance = axios.create({

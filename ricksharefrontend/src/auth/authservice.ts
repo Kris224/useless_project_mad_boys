@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = 'https://dilshadvln.pythonanywhere.com/api';
 const REFRESH_TOKEN_URL = `${API_BASE_URL}/user/get-access-token/`;
 
 export const getAccessToken = () => localStorage.getItem('accessToken');
