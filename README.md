@@ -15,6 +15,7 @@
 ### Project Description
 
 Our project aims to create a rickshaw-sharing platform that connects individuals traveling to the same destination at similar times, allowing them to team up and share a rickshaw. This solution not only reduces individual travel expenses but also contributes to minimizing traffic congestion and carbon emissions. Our platform allows individuals to create a "travel card" with their destination, time, and other relevant details. Other users with similar travel plans can then view and join these cards, forming teams to share a rickshaw. This initiative represents a step towards making urban transportation more affordable, sustainable, and accessible.
+> This idea originated from our experiences teaming up with strange students during our morning commutes to college from nearby town, fostering unexpected friendships along the way.
 
 ### The Problem (that doesn't exist)
 
