@@ -1,110 +1,114 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import api from "../api/api";
+import api from "../api/api"; // Import your API instance
 
 interface Member {
-  id: string;
-  name: string;
+    id: string;
+    name: string;
 }
 
-interface Trip {
-  id: string;
-  name: string;
-  starting: string;
-  destination: string;
-  date: string;
-  time: string;
-  created_by: string;
-  members: Member[];
-  is_member: boolean;
+interface TripDetail {
+    id: string;
+    name: string;
+    starting: string;
+    destination: string;
+    date: string;
+    time: string;
+    created_by: string;
+    members: Member[];
+    is_member: boolean;
+    current_user: string;
 }
 
-const TripPage: React.FC = () => {
-  const { tripId } = useParams<{ tripId: string }>();
-  const [trip, setTrip] = useState<Trip | null>(null);
-  const [error, setError] = useState<string | null>(null);
+const TripDetails: React.FC = () => {
+    const { tripId } = useParams<{ tripId: string }>();
+    const [trip, setTrip] = useState<TripDetail | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchTrip = async () => {
-      try {
-        const response = await api.get(`/app/trip-card/${tripId}`); // Adjusted endpoint for fetching trip details
-        setTrip(response.data.response);
-      } catch (err) {
-        console.error("Error fetching trip:", err);
-        setError("Failed to load trip details.");
-      }
+    useEffect(() => {
+        const fetchTripDetails = async () => {
+            try {
+                const response = await api.get(`/app/trip-card/${tripId}/`);
+                setTrip(response.data.response);
+            } catch (err) {
+                console.error("Error fetching trip details:", err);
+                setError("Failed to load trip details.");
+            }
+        };
+
+        fetchTripDetails();
+    }, [tripId]);
+
+    const formatTime12Hour = (time: string) => {
+        const [hour, minute] = time.split(":");
+        const date = new Date();
+        date.setHours(parseInt(hour));
+        date.setMinutes(parseInt(minute));
+        return date.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+        });
     };
 
-    fetchTrip();
-  }, [tripId]);
+    const handleRemoveMember = async (memberId: string) => {
+        try {
+            await api.post(`/app/trip-card/${tripId}/remove/${memberId}/`);
+            setTrip((prevTrip) => {
+                if (prevTrip) {
+                    return {
+                        ...prevTrip,
+                        members: prevTrip.members.filter((member) => member.id !== memberId),
+                    };
+                }
+                return prevTrip;
+            });
+        } catch (error) {
+            console.error("Error removing member:", error);
+        }
+    };
 
-  const handleRemoveMember = async (memberId: string) => {
-    if (trip) {
-      try {
-        await api.delete(`/api/app/trip-card/${tripId}/remove/${memberId}`); // Adjusted endpoint for member removal
-        setTrip((prevTrip) => ({
-          ...prevTrip!,
-          members: prevTrip!.members.filter((member) => member.id !== memberId),
-        }));
-      } catch (err) {
-        console.error("Error removing member:", err);
-        setError("Failed to remove member.");
-      }
+    if (error) {
+        return <div className="text-red-500">{error}</div>;
     }
-  };
 
-  const formatDateTime = (dateString: string, timeString: string) => {
-    const date = new Date(`${dateString}T${timeString}`);
-    return {
-      formattedDate: date.toLocaleDateString(), // Format the date
-      formattedTime: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) // Format the time to 12-hour format
-    };
-  };
+    if (!trip) {
+        return <div>Loading...</div>;
+    }
 
-  if (error) {
-    return <div className="text-red-500">{error}</div>;
-  }
+    return (
+        <section className="bg-blue-50 px-4 py-10">
+            <div className="container-xl lg:container m-auto">
+                <h2 className="text-3xl font-bold text-indigo-500 mb-6">{trip.name}</h2>
+                <p><strong>Starting:</strong> {trip.starting}</p>
+                <p><strong>Destination:</strong> {trip.destination}</p>
+                <p><strong>Date:</strong> {new Date(trip.date).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "numeric",
+                    day: "numeric",
+                })}</p>
+                <p><strong>Time:</strong> {formatTime12Hour(trip.time)}</p>
 
-  if (!trip) {
-    return <div>Loading...</div>; // Placeholder while loading
-  }
-
-  const { formattedDate, formattedTime } = formatDateTime(trip.date, trip.time);
-  
-  return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
-      <h1 className="text-3xl font-bold mb-4">{trip.name}</h1>
-      <p className="text-lg text-gray-700">
-        {trip.starting} <span className="font-bold">→</span> {trip.destination}
-      </p>
-      <p className="text-gray-600">Date: {formattedDate}</p>
-      <p className="text-gray-600">Time: {formattedTime}</p>
-
-      <h3 className="text-lg font-semibold mt-6">Members:</h3>
-      {trip.members.length > 0 ? (
-        <ul className="list-disc list-inside">
-          {trip.members.map((member) => (
-            <li key={member.id} className="text-gray-800 flex items-center">
-              {member.name}
-              {trip.created_by === member.id && (
-                <span className="ml-2 text-yellow-500" role="img" aria-label="crown">👑</span> // Crown symbol for owner
-              )}
-              {trip.created_by === member.id ? null : (
-                <button 
-                  onClick={() => handleRemoveMember(member.id)} 
-                  className="ml-4 text-red-600 hover:text-red-800"
-                >
-                  Remove
-                </button>
-              )}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-gray-600">No members in this trip.</p>
-      )}
-    </div>
-  );
+                <h3 className="text-2xl font-semibold mt-6">Members</h3>
+                <ul className="mt-4">
+                    {trip.members.map((member) => (
+                        <li key={member.id} className="flex items-center justify-between">
+                            <span className={member.id === trip.created_by ? "font-bold" : ""}>
+                                {member.name} {member.id === trip.created_by && "(Owner)"}
+                            </span>
+                            {trip.current_user == trip.created_by && member.id !== trip.created_by && (
+                                <button
+                                    onClick={() => handleRemoveMember(member.id)}
+                                    className="text-red-500">
+                                    Remove
+                                </button>
+                            )}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </section>
+    );
 };
 
-export default TripPage;
+export default TripDetails;

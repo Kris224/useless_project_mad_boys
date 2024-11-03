@@ -11,6 +11,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import { getAccessToken } from "./auth/authservice";
+import TripDetails from "./pages/TripPage";
 
 const isAuthenticated = (): boolean => {
   const token = getAccessToken();
@@ -45,6 +46,15 @@ const App = () => {
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+
+        <Route
+          path="/trip/:tripId"
+          element={
+            <PrivateRoute>
+              <TripDetails/>
+            </PrivateRoute>
+          }
+        />
       </>
     )
   );

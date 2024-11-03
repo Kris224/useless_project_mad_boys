@@ -1,13 +1,28 @@
 import { useState } from "react";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
+import api from "../api/api";
+import { setAccessToken, setRefreshToken } from "../auth/authservice";
 
 export default function Example() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const handleLogout = async () => {
+    try {
+      await api.post('/user/logout/'); // Use your axios instance here
+      console.log("Logged out successfully");
+      setAccessToken("")
+      setRefreshToken("")
+      window.location.reload()
+      // Optionally, you can perform additional actions like clearing tokens or redirecting
+    } catch (error) {
+      console.error("Error during logout:", error);
+      // Handle error appropriately, e.g., show a message to the user
+    }
+  };
+
   return (
-    <div className="bg-white">
+    <div className="bg-blue-50">
       <header className="absolute inset-x-0 top-0 z-50">
         <nav
           aria-label="Global"
@@ -37,11 +52,9 @@ export default function Example() {
             </button>
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <Link to={"/logout"}>
-              <span className="text-sm/6 font-semibold text-gray-900">
+              <span onClick={handleLogout} className="text-sm/6 font-semibold text-gray-900">
                 Logout <span aria-hidden="true">&rarr;</span>
               </span>
-            </Link>
           </div>
         </nav>
         <Dialog
@@ -75,11 +88,9 @@ export default function Example() {
             <div className="mt-6 flow-root">
               <div className="-my-6 divide-y divide-gray-500/10">
                 <div className="py-6">
-                  <Link to={"/logout"}>
-                    <span className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
+                    <span onClick={handleLogout} className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
                       Log out
                     </span>
-                  </Link>
                 </div>
               </div>
             </div>
